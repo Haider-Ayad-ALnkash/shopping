@@ -1,0 +1,23 @@
+
+.login{
+    width:30%;
+    position: absolute;
+    top: 50%;
+    left:50%;
+    transform: translate(-50%,-50%);
+}
+#user{
+    display:none;
+}
+.img-fluid{
+    height:100%;
+}
+.navbar-nav{
+    display:inline-flex !important;
+}
+.shoppingCart{
+    position: absolute;
+    top: 50px;
+    right: 65px;
+    display:none
+}

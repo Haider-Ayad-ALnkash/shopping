@@ -9,7 +9,7 @@ if(dataUser){
 }
 let productsDom=document.querySelector(".products");
 function drawProducts(allproducts=[]) {
-    let dataShoppingCart=JSON.parse(localStorage.getItem("dataShoppingCart"))||allproducts;
+    let dataShoppingCart=JSON.parse(localStorage.getItem("favItems"))||allproducts;
     let productsUI=dataShoppingCart.map((item)=>{
         return`
         <div class="card mb-3 " style="max-width: 640px;">
@@ -24,7 +24,7 @@ function drawProducts(allproducts=[]) {
                   <p class="card-text">${item.qyt}</p>
                   <p class="card-text">${item.size}</p>
                   <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
-                  <button type="button" class="btn btn-primary" onclick="deleteProduct(${item.id})">Remove From Cart</button>
+                  <button type="button" class="btn btn-primary" onclick="deleteProduct(${item.id})">Remove Fvao</button>
                   <span class="badge rounded-pill bg-danger">Danger</span>
                   </div>
               </div>
@@ -37,8 +37,8 @@ function drawProducts(allproducts=[]) {
 drawProducts();
 
 function deleteProduct(id) {
-    let items=JSON.parse(localStorage.getItem("dataShoppingCart"));
+    let items=JSON.parse(localStorage.getItem("favItems"));
     let newItems=items.filter(item=>item.id !== id);
-    localStorage.setItem("dataShoppingCart",JSON.stringify(newItems));
+    localStorage.setItem("favItems",JSON.stringify(newItems));
     drawProducts(newItems);
 }

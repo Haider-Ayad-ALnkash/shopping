@@ -7,9 +7,10 @@ if(dataUser){
     username.style.display='block';
     userInfo.innerHTML=dataUser;
 }
-
+let dataProducts=DataProduct;
 let productsDom=document.querySelector(".products");
-function drawProducts() {
+let drawProductsUI;
+(drawProductsUI = function drawProducts(products=[]) {
     let productsUI=products.map((item)=>{
         return`
         <div class="card mb-3 " style="max-width: 640px;">
@@ -24,17 +25,16 @@ function drawProducts() {
                   <p class="card-text">${item.qyt}</p>
                   <p class="card-text">${item.size}</p>
                   <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
-                  <button type="button" class="btn btn-primary" onclick="addDataProduct(${item.id})">Add To Cart</button>
-                  <span class="badge rounded-pill bg-danger">Danger</span>
+                  <button type="button" class="btn btn-primary" onclick="addDataToCart(${item.id})">Add To Cart</button>
+                  <i class="badge rounded-pill bg-danger" onclick="addFavorite(${item.id})" style="color:${item.like==true?'green':''}" >[==]</i>
                   </div>
               </div>
             </div>
           </div>
         `;
     });
-    productsDom.innerHTML=productsUI;
-}
-drawProducts();
+    productsDom.innerHTML=productsUI.join(" ");
+})( JSON.parse(localStorage.getItem("products"))||dataProducts);
 // Start Check exit user
 
 //Open shoppingCart
@@ -54,17 +54,32 @@ let badge=document.querySelector('.badge');
 let addItem=localStorage.getItem("dataShoppingCart")? JSON.parse(localStorage.getItem("dataShoppingCart")):[];
 if (addItem) {
     addItem.map(item=>{
-        containerCart.innerHTML+=`<h4 class="list-group-item list-group-item-action">${item.title}</h4>`;
+        containerCart.innerHTML+=`<h4 class="list-group-item list-group-item-action">${item.title}${item.qyt}</h4>`;
     })
     badge.innerHTML=addItem.length;
 }
-function addDataProduct(id) {
+
+//Func add to cart 
+allItem=[];
+function addDataToCart(id) {
     if (dataUser) {
-        choosenProduct=products.find(item=>item.id===id);
-        containerCart.innerHTML+=`<h4 class="list-group-item list-group-item-action">${choosenProduct.title}</h4>`;
+        let products=JSON.parse(localStorage(""))|| dataProducts 
+        choosenProduct=dataProducts.find(item=>item.id===id);
+       let item=allItem.find(i=>i.id===choosenProduct.id)
+        if (item) {
+         choosenProduct.qyt+=1;
+       } else {
+         allItem.push(choosenProduct);
+       }
+       containerCart.innerHTML="";
+
+       allItem.forEach(item=>{
+         containerCart.innerHTML+=`<h4 class="list-group-item list-group-item-action">${item.title} ${item.qyt}</h4>`;
+       })
         let shoppingLengthCart=document.querySelectorAll(".containerCart h4");
         addItem=[...addItem,choosenProduct];
-        localStorage.setItem("dataShoppingCart",JSON.stringify(addItem));
+       let uniqeProducts= uniqArray(addItem,"id");
+        localStorage.setItem("dataShoppingCart",JSON.stringify(uniqeProducts));
         badge.innerHTML=shoppingLengthCart.length;
     } else {
         location="login.html";
@@ -80,10 +95,43 @@ function transtionToURL(id) {
 //Searh on product
 inputSearch=document.getElementById("search");
 inputSearch.addEventListener("keyup",(e)=>{
-  if (e.keyCode=== 13 ) {
-    
-  }  
+    search(e.target.value,dataProducts);
   if (e.target.value.trim()==="") {
-    drawProducts();
+    drawProductsUI(dataProducts)
   }
 })
+function search(title,myArray) {
+    let arr=myArray.filter(item=>item.title.indexOf(title) !== -1)
+    drawProductsUI(arr)
+}
+
+// Get Uniuqe Array 
+function uniqArray(arr,filterType) {
+  let uniqeArray=arr.map(item=>item[filterType])
+  .map((item,index,finalArray)=>finalArray.indexOf(item)===index && index)
+  .filter((item)=>arr[item])
+  .map((item)=>arr[item]);
+  return uniqeArray;
+}
+
+// func favorate  
+let favoriteItems=localStorage.getItem("favItems")?JSON.parse(localStorage.getItem("favItems")):[];
+function addFavorite(id) {
+    if (dataUser) {
+      let choosenProduct=dataProducts.find(item=>item.id===id);
+      choosenProduct.like=true;
+      favoriteItems=[...favoriteItems,choosenProduct];
+      let finalArrayFav= uniqArray(favoriteItems,"id");
+      facaoriteArray=localStorage.setItem("favItems",JSON.stringify(finalArrayFav));
+      dataProducts.map(item=>{
+        if (item.id === choosenProduct.id){
+          item.like=true;
+        }
+      })
+      localStorage.setItem("products",JSON.stringify(dataProducts))
+      drawProductsUI(dataProducts);
+      console.log(dataProducts);
+  } else {
+      location="login.html";
+  }
+}

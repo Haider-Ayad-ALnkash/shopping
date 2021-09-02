@@ -1,6 +1,6 @@
 
 //Data
-let products=[
+let DataProduct=[
     {
         id:1,
         title:"head phone",
@@ -11,7 +11,7 @@ let products=[
     },
     {
         id:2,
-        title:"head phone",
+        title:"Sound",
         desc:"this is description for products",
         size:"large",
         qyt:1,
@@ -34,4 +34,4 @@ let products=[
         imageUrl:"image/04.jpg"
     }
 ]
-localStorage.setItem("products",JSON.stringify(products))
+// localStorage.setItem("products",JSON.stringify(DataProduct))
